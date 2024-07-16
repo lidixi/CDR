@@ -8,5 +8,6 @@
 1.会在TASK_DETAILS表里写入：主键ID自增，外键TASK_ID依赖于TASK_LOGS表的主键ID，RUN_NAME=该操作的名称、RUN_TIME=操作运行开始时间，RUN_STATUS=操作执行是否成功和LOG_DESCRIPTION=“运行监测成功”或错误信息描述；
 2.会在DATA_LOGS表里写入：主键ID自增，外键TASK_ID依赖于TASK_LOGS表的主键ID，RUN_TIME=操作开始执行时间，TASK_NAME=“CDR任务”，RULE_NAME=该操作的名称，AUDIT_NAME=符合该操作的规则要求的记录的数量，BASE_VALUE=基础数值，ANOMALY_VALUE=不符合该操作的规则要求的记录的数量，TIME_RANGE记录“操作开始时间 至 操作结束时间”;
 3.会将PATIENT1表中不符合该操作的规则的具体记录在DATA_DETAILS中备份：主键ID自增，PATIENT_ID相同，外键TASK_ID依赖于TASK_LOG表的主键ID，PATIENT_ID相同，NAME相同，ID_NO相同，ADDRESS相同，PHONE_NO相同，SEX_NAME相同，BIRTH_DATE相同，CREATE_DATE相同，AGE相同，YQ_NAME相同。
+
 其余为零散的查表功能。核心代码在TaskService、TaskRepository里。以后业务不要用JDBC坑太多，建议都用JPA。
 非常好的shit moutain，改了十几遍屹立不倒。
