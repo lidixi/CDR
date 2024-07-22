@@ -15,7 +15,7 @@ public class TaskDetailsController {
 
 
     @GetMapping("/getAllTask")
-    public List<Map<String, Object>> getAllTask(@RequestParam int taskId) {
+    public List<Map<String, Object>> getAllTask() {
         return taskDetailsService.getAllTask();
     }
 }
