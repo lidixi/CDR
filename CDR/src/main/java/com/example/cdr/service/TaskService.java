@@ -1,6 +1,7 @@
 package com.example.cdr.service;
 
 import com.example.cdr.main.*;
+import com.example.cdr.repository.Patient2CountRepository;
 import com.example.cdr.repository.TaskRepository;
 import jakarta.annotation.PreDestroy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -20,9 +21,11 @@ public class TaskService {
     private final Set<String> uniquePatientIdAndDateSet = ConcurrentHashMap.newKeySet();
     private final ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
     private ScheduledFuture<?> scheduledFuture;
+    private final Patient2CountRepository patient2CountRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, Patient2CountRepository patient2CountRepository) {
         this.taskRepository = taskRepository;
+        this.patient2CountRepository = patient2CountRepository;
         taskScheduler.initialize();
     }
 
@@ -88,6 +91,7 @@ public class TaskService {
             List<Patient1> patients = taskRepository.findPatient1(startDate, endDate, yqName);
             int auditName = 0;
             int anomalyValue = 0;
+            int baseValue = patient2CountRepository.countPatient2(startDate, endDate, yqName);
 
             for (Patient1 patient : patients) {
                 if (rule.test(patient)) {
@@ -99,7 +103,7 @@ public class TaskService {
             }
 
             // 更新DATA_LOGS记录
-            saveDataLogs(taskLogs, operationName, auditName, patients.size(), anomalyValue, startDate, endDate);
+            saveDataLogs(taskLogs, operationName, auditName,  baseValue, anomalyValue, startDate, endDate);
             taskDetails.setRunStatus("true");
             taskDetails.setLogDescription("运行监测成功");
         } catch (Exception e) {
